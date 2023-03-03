@@ -7,7 +7,6 @@ import logging_config
 # logging
 logger = logging_config.logger
 
-
 class SendKafka(ExtractApi) : 
 
     def __init__(self, topic = 'finance') : 

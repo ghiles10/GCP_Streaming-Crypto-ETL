@@ -35,3 +35,4 @@ variable "bucket" {
   type        = string
   default     = "kafka-finance-data"
 }
+
