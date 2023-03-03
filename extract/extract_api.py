@@ -1,8 +1,12 @@
 import requests
 import json
+import logging_config
 
+# logging
+logger = logging_config.logger
 
 class ExtractApi : 
+
 
     def __init__(self) :
 
@@ -16,8 +20,10 @@ class ExtractApi :
         response = requests.get(path, timeout = 5) 
         
         if response.status_code == 200 :
+
+            logger.debug("extract_symbols : response status code is 200")
+
             response = json.loads(response.text) 
-            
             for symbol in response :
                 for v in symbol.values() : 
                     if v.endswith("USDT") : 
@@ -27,12 +33,14 @@ class ExtractApi :
             
             """ this method extract data from kucoin api """
 
+            logger.debug(" being extract finance data")
+
             for symbol in self.symbols :
 
                 response = requests.get(path + f"{symbol[:-4]}-USDT", timeout = 5) 
         
                 if response.status_code == 200 : 
-                    response = json.loads(response.text) 
+                    response = json.loads(response.text)['data']
                     print(response)
 
 
