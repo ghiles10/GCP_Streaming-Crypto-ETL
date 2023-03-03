@@ -1,4 +1,4 @@
-from pyspark import SparkSession
+from pyspark.sql import SparkSession
 # Create a SparkSession 
 
 def get_spark_session(app_name = 'finance', master="yarn"):
