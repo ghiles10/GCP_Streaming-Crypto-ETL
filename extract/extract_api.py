@@ -10,7 +10,7 @@ class ExtractApi :
 
     def __init__(self) :
 
-        self.symbols = [] 
+        self.symbols = []
 
 
     def extract_symbols(self, path = "https://api.binance.com/api/v3/ticker/price") : 
@@ -40,12 +40,9 @@ class ExtractApi :
                 response = requests.get(path + f"{symbol[:-4]}-USDT", timeout = 5) 
         
                 if response.status_code == 200 : 
-                    response = json.loads(response.text)['data']
-                    print(response)
-
-
-
-
+                    return  json.loads(response.text)['data']  
+            
+                    
 if __name__ == "__main__" : 
 
     extract_api = ExtractApi()
