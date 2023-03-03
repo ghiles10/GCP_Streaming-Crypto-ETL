@@ -5,6 +5,7 @@ __pycache__/
 
 # terraform 
 terraform/terraform.tfstate
+terraform/.terraform/plugins/linux_amd64
 # C extensions
 *.so
 
