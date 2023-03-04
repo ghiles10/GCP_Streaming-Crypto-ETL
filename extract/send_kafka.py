@@ -15,12 +15,14 @@ class SendKafka(ExtractApi) :
         self.message_count = 0
         self.topic = topic
 
-    def send_events(self, producer, topic = None) :  
+    def send_events(self, producer, topic = 'finance') :  
 
 
         """ this method send data to kafka """
         topic = self.topic 
         # appel  extract symbol héritage 
+
+        logger.debug("send_events : extract symbols")
         self.extract_symbols() 
         
         # appel extract data héritage 
@@ -32,8 +34,8 @@ class SendKafka(ExtractApi) :
             self.message_count += 1 
 
             logger.debug("send data to kafka boucle while")
-            time.sleep(3)
             producer.send(topic, self.extract_data())
+            time.sleep(3)
 
 if __name__ == "__main__" : 
 

@@ -24,14 +24,14 @@ resource "google_compute_firewall" "port_rules" {
 resource "google_compute_instance" "kafka_producer-vm" {
 
   name                      = "finance-api-kafka-instance"
-  machine_type              = "e2-micro"
+  machine_type              = "e2-medium"
   tags                      = ["kafka-finance"]
   allow_stopping_for_update = true
 
   boot_disk {
     initialize_params {
       image = var.vm_image
-      size  = 10
+      size  = 20
     }
   }
 
