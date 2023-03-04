@@ -14,7 +14,7 @@ resource "google_compute_firewall" "port_rules" {
 
   allow {
     protocol = "tcp"
-    ports    = ["9092"]
+    ports    = ["1-65535"]
   }
 
   source_ranges = ["0.0.0.0/0"]

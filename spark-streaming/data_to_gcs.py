@@ -13,9 +13,13 @@ def get_spark_session(app_name = 'finance', master="yarn"):
 
 spark = get_spark_session()
 
-data_stream = ( spark.readStream.format("kafka").option("kafka.bootstrap.servers", "kafka_address:kafka_port").option("subscribe", "finance")
+data_stream = ( spark.readStream.format("kafka").option("kafka.bootstrap.servers", "35.234.157.65:9092").option("subscribe", "finance")
     .option("startingOffsets", "earliest").load() )
 
 # Path: spark-streaming/data_to_gcs.py 
-data_stream.writeStream.format('parquet').option('path', 'gs://kafka-finance-data/data').option('checkpointLocation', 'gs://kafka-finance-data').start()
+( data_stream.writeStream.format('csv')
+ .option('path', 'gs://kafka-finance-data/data')
+ .trigger(processingTime="10 seconds" )
+ .outputMode('append')  
+ .option('checkpointLocation', 'gs://kafka-finance-data/checks').start() ) 
 

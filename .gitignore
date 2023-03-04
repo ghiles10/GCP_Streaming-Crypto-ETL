@@ -9,6 +9,7 @@ terraform/.terraform/plugins/linux_amd64
 terraform/terraform.tfstate.backup
 # C extensions
 *.so
+installation
 
 # Distribution / packaging
 .Python

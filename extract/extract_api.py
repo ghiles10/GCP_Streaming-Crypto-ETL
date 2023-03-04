@@ -43,6 +43,7 @@ class ExtractApi :
                     
                     return json.loads(response.text)['data']  
             
+            
                     
 if __name__ == "__main__" : 
 

@@ -35,6 +35,7 @@ class SendKafka(ExtractApi) :
 
             logger.debug("send data to kafka boucle while")
             producer.send(topic, self.extract_data())
+            print("printer")
             time.sleep(3)
 
 if __name__ == "__main__" : 

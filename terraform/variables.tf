@@ -7,13 +7,13 @@ variable "project" {
 variable "region" {
   description = "project regio,"
   type        = string
-  default     = "us-central1"
+  default     = "europe-west2"
 }
 
 variable "zone" {
   description = "project zone"
   type        = string
-  default     = "us-central1-c"
+  default     = "europe-west2-a"
 }
 
 variable "network" {
