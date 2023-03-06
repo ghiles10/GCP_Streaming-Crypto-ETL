@@ -40,7 +40,7 @@ class SendKafka(ExtractApi) :
             for info in data : 
                 print('dans la bouce for -------------------------------------------')
                 
-                time.sleep(2)
+                time.sleep(3)
                 producer.send(topic, info)
                 self.message_count += 1 
                 print(f"send data to kafka {self.message_count}")
