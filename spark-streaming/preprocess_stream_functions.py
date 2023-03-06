@@ -1,4 +1,4 @@
-from pyspark.sql.functions import expr, from_json, month, hour, dayofmonth, col, year
+from pyspark.sql.functions import expr, from_json, month, hour, dayofmonth, col, year, split
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType, LongType
 from pyspark.sql import SparkSession
 import time
@@ -15,20 +15,20 @@ spark = get_spark_session()
 json_schema = StructType([
   StructField("time", LongType()),
   StructField("symbol", StringType()),
-  StructField("buy", StringType()),
-  StructField("sell", StringType()),
-  StructField("changeRate", StringType()),
-  StructField("changePrice", StringType()),
-  StructField("high", StringType()),
-  StructField("low", StringType()),
-  StructField("vol", StringType()),
-  StructField("volValue", StringType()),
-  StructField("last", StringType()),
-  StructField("averagePrice", StringType()),
-  StructField("takerFeeRate", StringType()),
-  StructField("makerFeeRate", StringType()),
-  StructField("takerCoefficient", StringType()),
-  StructField("makerCoefficient", StringType())
+  StructField("buy", DoubleType()),
+  StructField("sell", DoubleType()),
+  StructField("changeRate", DoubleType()),
+  StructField("changePrice", DoubleType()),
+  StructField("high", DoubleType()),
+  StructField("low", DoubleType()),
+  StructField("vol", DoubleType()),
+  StructField("volValue", DoubleType()),
+  StructField("last", DoubleType()),
+  StructField("averagePrice", DoubleType()),
+  StructField("takerFeeRate", DoubleType()),
+  StructField("makerFeeRate", DoubleType()),
+  StructField("takerCoefficient", DoubleType()),
+  StructField("makerCoefficient", DoubleType())
 ])
 
 # Define the input data stream
@@ -48,7 +48,7 @@ data_stream_json = (data_stream
                                 "json_data.takerCoefficient", "json_data.makerCoefficient")
                                 )
 
-
+# transofmre the time column to timestamp and add year, month, day and hour columns
 data_stream_json=  ( data_stream_json.withColumn("time", (col("time")/1000).cast("timestamp") )
                                   .withColumn("year", year("time")) 
                                   .withColumn("month", month("time"))
@@ -56,6 +56,7 @@ data_stream_json=  ( data_stream_json.withColumn("time", (col("time")/1000).cast
                                   .withColumn("hour", hour("time"))  
                                           )                                
 
+data_stream_json =  data_stream_json.withColumn("symbol", split(data_stream_json["symbol"], "-")[0]) 
 
 # Staet the query to write the output to a memoty table 
 query = (data_stream_json
@@ -69,4 +70,4 @@ query = (data_stream_json
 # Print the output DataFrame every 3 seconfs 
 while True : 
   spark.sql("SELECT * FROM test").show(truncate=False)
-  time.sleep(3)
+  time.sleep(3)                           
