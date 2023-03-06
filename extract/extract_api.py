@@ -34,7 +34,7 @@ class ExtractApi :
             """ this method extract data from kucoin api """
 
             logger.debug(" being extract finance data")
-            self.symbols = list(set(self.symbols))[:10]
+            self.symbols = list(set(self.symbols))[:100]
 
             data = [] 
             for symbol in self.symbols :

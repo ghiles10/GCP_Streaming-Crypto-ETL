@@ -1,27 +1,29 @@
 from pyspark.sql import SparkSession
+from preprocess_stream_functions import read_kafka_streams, preprocess_stream
+import os 
 
-def get_spark_session(app_name='finance'):
-    spark = (SparkSession.builder
-             .appName(app_name)
-             .getOrCreate())
-    return spark
+ADRESS = os.environ['KAFKA_ADRESS'] 
+DATA_PATH = os.environ['DATA_PATH']
+CHECKPOINT_PATH = os.environ['CHECKPOINT_PATH']
 
-spark = get_spark_session()
+spark = (SparkSession.builder
+            .appName("finance")
+            .master("yarn")
+            .getOrCreate()
+            )
 
-data_stream = (spark.readStream
-               .format("kafka")
-               .option("kafka.bootstrap.servers", "10.154.0.19:9092")
-               .option("subscribe", "finance")
-               .option("startingOffsets", "earliest")
-               .load())
+data_stream = read_kafka_streams(ADRESS, spark) 
+data_stream = preprocess_stream(spark )
 
 query = (data_stream
          .writeStream
          .outputMode("append")
          .format("csv")
-         .option("path", "gs://kafka-finance-data/data//")
-         .option("checkpointLocation", "gs://kafka-finance-data/checks/")
+         .option("header", "true")
+         .partitionBy("year" , "month", "day", "hour")
+         .option("path", DATA_PATH )
+         .option("checkpointLocation", CHECKPOINT_PATH )
          .trigger(processingTime="10 seconds")
-         .start())
+         .start() )
 
 query.awaitTermination()
