@@ -1,4 +1,4 @@
-from pyspark.sql.functions import expr, from_json
+from pyspark.sql.functions import expr, from_json, month, hour, dayofmonth, col, year
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType, LongType
 from pyspark.sql import SparkSession
 import time
@@ -45,7 +45,17 @@ data_stream_json = (data_stream
                     .selectExpr("json_data.time", "json_data.symbol", "json_data.buy", "json_data.sell", "json_data.changeRate",
                                 "json_data.changePrice", "json_data.high", "json_data.low", "json_data.vol", "json_data.volValue",
                                 "json_data.last", "json_data.averagePrice", "json_data.takerFeeRate", "json_data.makerFeeRate",
-                                "json_data.takerCoefficient", "json_data.makerCoefficient"))
+                                "json_data.takerCoefficient", "json_data.makerCoefficient")
+                                )
+
+
+data_stream_json=  ( data_stream_json.withColumn("time", (col("time")/1000).cast("timestamp") )
+                                  .withColumn("year", year("time")) 
+                                  .withColumn("month", month("time"))
+                                  .withColumn("day", dayofmonth("time")) 
+                                  .withColumn("hour", hour("time"))  
+                                          )                                
+
 
 # Staet the query to write the output to a memoty table 
 query = (data_stream_json
