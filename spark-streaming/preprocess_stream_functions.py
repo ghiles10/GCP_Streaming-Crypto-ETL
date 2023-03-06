@@ -66,7 +66,7 @@ def preprocess_stream(spark, data_stream,  topic = "finance", output_mode="appen
                                             )                                
 
   data_stream_json =  data_stream_json.withColumn("symbol", split(data_stream_json["symbol"], "-")[0]) 
-  logger.debug("end of preprocessing from kafka topic: {}".format(topic)
+  logger.debug("end of preprocessing from kafka topic: {}".format(topic) ) 
 
   return data_stream_json
 
