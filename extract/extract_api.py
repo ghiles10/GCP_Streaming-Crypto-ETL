@@ -34,14 +34,17 @@ class ExtractApi :
             """ this method extract data from kucoin api """
 
             logger.debug(" being extract finance data")
-            
-            for symbol in self.symbols :
+            self.symbols = list(set(self.symbols))[:10]
 
+            data = [] 
+            for symbol in self.symbols :
+                
                 response = requests.get(path + f"{symbol[:-4]}-USDT", timeout = 5) 
         
                 if response.status_code == 200 : 
                     
-                    return json.loads(response.text)['data']  
+                    data.append( json.loads(response.text)['data'] ) 
+            return data  
             
             
                     

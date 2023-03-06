@@ -9,6 +9,8 @@ logger = logging_config.logger
 
 class SendKafka(ExtractApi) : 
 
+    """ this class send extracted data to kafka producer"""
+    
     def __init__(self, topic = 'finance') : 
 
         super().__init__()
@@ -23,20 +25,27 @@ class SendKafka(ExtractApi) :
         # appel  extract symbol héritage 
 
         logger.debug("send_events : extract symbols")
+        print('extract symbols -------------------------------------------')
         self.extract_symbols() 
         
         # appel extract data héritage 
-        # initialisation producer : KafkaProducer(bootstrap_servers = "localhost:9092", value_serializer = lambda x : json.dumps(x).encode("utf-8")) 
         logger.debug("send_events : producer is initialized")
 
         while True : 
 
-            self.message_count += 1 
-
             logger.debug("send data to kafka boucle while")
-            producer.send(topic, self.extract_data())
-            print("printer")
-            time.sleep(3)
+
+            data = self.extract_data()
+
+            for info in data : 
+                print('dans la bouce for -------------------------------------------')
+                
+                time.sleep(2)
+                producer.send(topic, info)
+                self.message_count += 1 
+                print(f"send data to kafka {self.message_count}")
+
+    
 
 if __name__ == "__main__" : 
 
