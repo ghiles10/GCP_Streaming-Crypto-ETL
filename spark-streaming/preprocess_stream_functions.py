@@ -2,7 +2,7 @@ from pyspark.sql.functions import expr, from_json, month, hour, dayofmonth, col,
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType, LongType
 import time
 
-def read_kafka_streams(adress, topic = 'finance', spark): 
+def read_kafka_streams(adress,spark, topic = 'finance'): 
 
   # Define the input data stream
   data_stream = (spark.readStream
@@ -14,7 +14,7 @@ def read_kafka_streams(adress, topic = 'finance', spark):
   
   return data_stream
 
-def preprocess_stream(spark, topic = "finance", output_mode="append", trigger="3 seconds"): 
+def preprocess_stream(spark, data_stream,  topic = "finance", output_mode="append", trigger="3 seconds"): 
 
   """ this function allows to read data from a kafka topic and transform it"""
    

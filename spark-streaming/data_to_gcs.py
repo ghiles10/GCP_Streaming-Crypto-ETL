@@ -13,9 +13,9 @@ spark = (SparkSession.builder
             )
 
 data_stream = read_kafka_streams(ADRESS, spark) 
-data_stream = preprocess_stream(spark )
+data_stream_read = preprocess_stream(spark, data_stream= data_stream )
 
-query = (data_stream
+query = (data_stream_read
          .writeStream
          .outputMode("append")
          .format("csv")
