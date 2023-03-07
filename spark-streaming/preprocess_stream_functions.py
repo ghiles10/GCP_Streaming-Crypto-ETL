@@ -31,7 +31,7 @@ def preprocess_stream(spark, data_stream,  topic = "finance", output_mode="appen
     StructField("sell", DoubleType()),
     StructField("changeRate", DoubleType()),
     StructField("changePrice", DoubleType()),
-    StructField("high", DoubleType()),
+    StructField("high", DoubleType()), 
     StructField("low", DoubleType()),
     StructField("vol", DoubleType()),
     StructField("volValue", DoubleType()),
