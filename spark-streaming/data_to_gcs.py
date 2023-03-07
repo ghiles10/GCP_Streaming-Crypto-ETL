@@ -9,7 +9,7 @@ ADRESS = os.environ['KAFKA_ADRESS']
 DATA_PATH = os.environ['DATA_PATH']
 CHECKPOINT_PATH = os.environ['CHECKPOINT_PATH']
 
-logger.debug("Creating spark session")
+logger.debug("Creating spark session for kafka stream")
 
 spark = (SparkSession.builder
             .appName("finance")

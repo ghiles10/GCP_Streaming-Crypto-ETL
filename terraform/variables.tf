@@ -36,3 +36,9 @@ variable "bucket" {
   default     = "kafka-finance-data"
 }
 
+variable "dataset_id" {
+  description = "dataset name for bigquery"
+  type        = string
+  default     = "finance"
+}
+
