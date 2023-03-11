@@ -1,6 +1,5 @@
 from google.cloud import bigquery
 import datetime
-
 from airflow.providers.google.cloud.operators.bigquery import BigQueryCreateEmptyTableOperator, BigQueryInsertJobOperator
 
 def create_insert_temp_table(PROJET_ID, DATASET_ID, TABLE_ID, BUCKET)   : 
@@ -28,7 +27,7 @@ def create_insert_temp_table(PROJET_ID, DATASET_ID, TABLE_ID, BUCKET)   :
     month = str(now.month)
     day = str(now.day)
     
-    uri = f"{BUCKET}/data/year={year}/month={month}/day={day}/*.csv"
+    uri = f"{BUCKET}/data/year={year}/month={month}/day=6/*.csv"
 
     load_job = client.load_table_from_uri(
         uri, table_id, job_config=job_config
@@ -41,55 +40,42 @@ def create_insert_temp_table(PROJET_ID, DATASET_ID, TABLE_ID, BUCKET)   :
     table.expires = datetime.datetime.now() + datetime.timedelta( minutes=30 )
     client.update_table(table, ['expires'])  
 
-def create_biq_query_table(PROJET_ID, DATASET_ID, TABLE_ID, schema, type, field, table)   :
+def create_biq_query_table(PROJET_ID, DATASET_ID, TABLE_ID, schema)   :
 
-    """  Create an empty table in Bigquery """
+    """ create a temp table to insert data from GCS to BigQuery"""
+    
+    # Construct a BigQuery client object.
+    client = bigquery.Client()
 
-    task = BigQueryCreateEmptyTableOperator(
+    table_id = f"{PROJET_ID}.{DATASET_ID}.{TABLE_ID}"
 
-        task_id = f'{datetime.datetime.now()}_create_empty_table',
-        project_id = PROJET_ID,
-        dataset_id = DATASET_ID,
-        table_id = TABLE_ID + "-" +table ,
-        schema_fields = schema,
-        time_partitioning = {
-            'type': type,
-            'field': field
-            },
-        exists_ok = True
-    )
+    # Créer une instance de la classe Table
+    table = bigquery.Table(table_id, schema=schema)
+   
+    # Créez la table dans BigQuery
+    table = client.create_table(table, exists_ok=True)
 
-    return task
 
-# schema = [
-#     bigquery.SchemaField("date", "DATE", mode="REQUIRED"),
-#     bigquery.SchemaField("nom", "STRING", mode="REQUIRED"),
-#     bigquery.SchemaField("prenom", "STRING", mode="REQUIRED"),
-# ]    
-# type = 'DAY'
-# field = 'date'
-# table = 'dim_test'
+def insert_job(PROJET_ID ,DATASET_ID ,TABLE_ID, table_ref_id):
 
-def insert_job(DATASET_ID, PROJET_ID, query, timeout):
+    """ Insert data from a query ( temp table) to fact and dim tables """
 
-    """ Insert data from a query to Bigquery """ 
+    client = bigquery.Client()
 
-    task = BigQueryInsertJobOperator(
+    query = f"""
+    SELECT time, symbol, volValue, high, low
+    FROM {PROJET_ID}.{DATASET_ID}.{TABLE_ID}
+    """ 
 
-        task_id = f'{datetime.datetime.now()}_execute_insert_query',
-        configuration = {
-        
-            'query': {
-                'query': query,
-                'useLegacySql': False
-            },
-            
-            'timeoutMs' : timeout,
-            'defaultDataset' : {
-                'datasetId': DATASET_ID,
-                'projectId': PROJET_ID
-                }
-            }
-    )
+    query_job = client.query(query)
+    results = query_job.result()
 
-    return task
+    table_ref = client.dataset(DATASET_ID).table(table_ref_id)
+    table = client.get_table(table_ref)
+
+    rows_to_insert = []
+    for row in results:
+        rows_to_insert.append((row.time, row.symbol, row.volValue, row.high, row.low))
+
+    if rows_to_insert:
+        client.insert_rows(table, rows_to_insert)

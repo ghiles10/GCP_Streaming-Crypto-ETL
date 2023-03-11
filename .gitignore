@@ -11,6 +11,8 @@ terraform/terraform.tfstate.backup
 *.so
 installation
 
+airflow/plugins/google_credentials.json
+
 # Distribution / packaging
 .Python
 build/
