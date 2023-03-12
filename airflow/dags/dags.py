@@ -1,6 +1,8 @@
 import os 
 from google.cloud import bigquery
 from airflow import DAG
+from schema import SCHEMA_FACT, SCHEMA_DIM_TIME, SCHEMA_DIM_STOCK
+from query import QUERY_FACT
 from airflow.operators.python import PythonOperator 
 from tasks_template import create_insert_temp_table, create_biq_query_table, insert_job_dim_time, insert_job_fact
 
@@ -26,73 +28,51 @@ with DAG(
     max_active_runs=1
     
 ) as dag: 
+        
+    client = bigquery.Client()
+
     
-    ###### 
     create_insert_temp_table_big_query = PythonOperator( python_callable = create_insert_temp_table,
                                                   task_id = 'create_insert_temp_table',  
                                                     op_kwargs = { 'PROJET_ID': PROJET_ID,
                                                                     'DATASET_ID': DATASET_ID,
                                                                     'TABLE_ID': TABLE_ID ,
-                                                                    'BUCKET': BUCKET } ) 
-    #########
-    schema_fact = [
-        bigquery.SchemaField("time", "STRING", mode="REQUIRED"),
-        bigquery.SchemaField("symbol", "STRING", mode="NULLABLE"),
-        bigquery.SchemaField("volvalue", "STRING", mode="NULLABLE"),
-        bigquery.SchemaField("high", "STRING", mode="NULLABLE"),
-        bigquery.SchemaField("low", "STRING", mode="NULLABLE")
-    ]   
+                                                                    'BUCKET': BUCKET, 
+                                                                     'client' : client } ) 
+
     create_table_fact = PythonOperator( python_callable = create_biq_query_table, 
                                         task_id = "create_fact_table" , 
                                         op_kwargs = { 'PROJET_ID': PROJET_ID, 
                                                         'DATASET_ID': DATASET_ID,
                                                         'TABLE_ID': "fact",
-                                                        'schema': schema_fact } 
+                                                        'schema': SCHEMA_FACT,
+                                                          'client' : client } 
                                                                         )
-    #########	
-    schema_dim_time = [
-        bigquery.SchemaField("time", "TIMESTAMP", mode="REQUIRED"),
-        bigquery.SchemaField("year", "DATE", mode="REQUIRED"),
-        bigquery.SchemaField("month", "INT64", mode="REQUIRED"),
-        bigquery.SchemaField("day", "INT64", mode="REQUIRED"),
-        bigquery.SchemaField("hour", "INT64", mode="REQUIRED")
-    ]   
+
     create_dim_table_time = PythonOperator( python_callable = create_biq_query_table, 
                                         task_id = "create_dim_table_time" , 
                                         op_kwargs = { 'PROJET_ID': PROJET_ID, 
                                                         'DATASET_ID': DATASET_ID,
                                                         'TABLE_ID': "dim_time",
-                                                        'schema': schema_dim_time } 
+                                                        'schema': SCHEMA_DIM_TIME,
+                                                          'client' : client } 
                                                                         )
-    #########
-    schema_dim_stock = [
-        bigquery.SchemaField("symbol", "STRING", mode="REQUIRED"),
-        bigquery.SchemaField("buy", "FLOAT64", mode="NULLABLE"),
-        bigquery.SchemaField("sell", "FLOAT64", mode="NULLABLE"),
-        bigquery.SchemaField("changeRate", "FLOAT64", mode="NULLABLE"),
-        bigquery.SchemaField("changePrice", "FLOAT64", mode="NULLABLE"),
-        bigquery.SchemaField("vol", "FLOAT64", mode="NULLABLE")
-
-    ]   
+ 
     create_tem_table_stock_exchange_price = PythonOperator( python_callable = create_biq_query_table, 
                                         task_id = "create_dim_table_stock_exchange_price" , 
                                         op_kwargs = { 'PROJET_ID': PROJET_ID, 
                                                         'DATASET_ID': DATASET_ID,
                                                         'TABLE_ID': "dim_stock",
-                                                        'schema': schema_dim_stock } 
+                                                        'schema': SCHEMA_DIM_STOCK,
+                                                        'client' : client } 
                                                                         )
 
-    query_fact = """
-    SELECT time, symbol, volvalue, high, low
-    FROM data-engineering-streaming.finance.temp_table ; 
-    """ 
-    client = bigquery.Client()
 
     insert_job_fact_table = PythonOperator( python_callable = insert_job_fact,
                                         task_id = "insert_data_fact_table" ,
                                         op_kwargs = { 'DATASET_ID': DATASET_ID,
                                                         'table_ref_id': "fact",
-                                                        'query': query_fact,
+                                                        'query': QUERY_FACT,
                                                         'client': client } ) 
     
 

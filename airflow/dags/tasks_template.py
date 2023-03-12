@@ -1,13 +1,10 @@
 from google.cloud import bigquery
 import datetime
 
-def create_insert_temp_table(PROJET_ID, DATASET_ID, TABLE_ID, BUCKET)   : 
+def create_insert_temp_table(PROJET_ID, DATASET_ID, TABLE_ID, BUCKET, client)   : 
 
     """ create a temp table to insert data from GCS to BigQuery"""
     
-    # Construct a BigQuery client object.
-    client = bigquery.Client()
-
     table_id = f"{PROJET_ID}.{DATASET_ID}.{TABLE_ID}"
 
     job_config = bigquery.LoadJobConfig(
@@ -39,13 +36,10 @@ def create_insert_temp_table(PROJET_ID, DATASET_ID, TABLE_ID, BUCKET)   :
     table.expires = datetime.datetime.now() + datetime.timedelta( minutes=30 )
     client.update_table(table, ['expires'])  
 
-def create_biq_query_table(PROJET_ID, DATASET_ID, TABLE_ID, schema)   :
+def create_biq_query_table(PROJET_ID, DATASET_ID, TABLE_ID, schema, client)   :
 
     """ create a temp table to insert data from GCS to BigQuery"""
     
-    # Construct a BigQuery client object.
-    client = bigquery.Client()
-
     table_id = f"{PROJET_ID}.{DATASET_ID}.{TABLE_ID}"
 
     # Créer une instance de la classe Table
