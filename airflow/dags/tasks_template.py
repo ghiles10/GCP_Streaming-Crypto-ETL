@@ -1,6 +1,5 @@
 from google.cloud import bigquery
 import datetime
-from airflow.providers.google.cloud.operators.bigquery import BigQueryCreateEmptyTableOperator, BigQueryInsertJobOperator
 
 def create_insert_temp_table(PROJET_ID, DATASET_ID, TABLE_ID, BUCKET)   : 
 
@@ -55,17 +54,9 @@ def create_biq_query_table(PROJET_ID, DATASET_ID, TABLE_ID, schema)   :
     # Créez la table dans BigQuery
     table = client.create_table(table, exists_ok=True)
 
+def insert_job_fact(DATASET_ID , table_ref_id, query, client):
 
-def insert_job(PROJET_ID ,DATASET_ID ,TABLE_ID, table_ref_id):
-
-    """ Insert data from a query ( temp table) to fact and dim tables """
-
-    client = bigquery.Client()
-
-    query = f"""
-    SELECT time, symbol, volValue, high, low
-    FROM {PROJET_ID}.{DATASET_ID}.{TABLE_ID}
-    """ 
+    """retreive data from a query ( temp table) and insert to fact and dim tables """
 
     query_job = client.query(query)
     results = query_job.result()
@@ -73,9 +64,20 @@ def insert_job(PROJET_ID ,DATASET_ID ,TABLE_ID, table_ref_id):
     table_ref = client.dataset(DATASET_ID).table(table_ref_id)
     table = client.get_table(table_ref)
 
-    rows_to_insert = []
-    for row in results:
-        rows_to_insert.append((row.time, row.symbol, row.volValue, row.high, row.low))
+    rows_to_insert = [(str(row.time), row.symbol, row.volvalue, row.high, row.low) for row in results]
+    if rows_to_insert:
+        client.insert_rows(table, rows_to_insert)
 
+def insert_job_dim_time(DATASET_ID , table_ref_id, query, client):
+
+    """retreive data from a query ( temp table) and insert to fact and dim tables """
+
+    query_job = client.query(query)
+    results = query_job.result()
+
+    table_ref = client.dataset(DATASET_ID).table(table_ref_id)
+    table = client.get_table(table_ref)
+
+    rows_to_insert = [(str(row.time), row.year, row.month, row.day, row.hour) for row in results]
     if rows_to_insert:
         client.insert_rows(table, rows_to_insert)
