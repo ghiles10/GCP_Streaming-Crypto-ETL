@@ -2,9 +2,9 @@ import os
 from google.cloud import bigquery
 from airflow import DAG
 from schema import SCHEMA_FACT, SCHEMA_DIM_TIME, SCHEMA_DIM_STOCK
-from query import QUERY_FACT, QUERY_DIM_TIME
+from query import QUERY_FACT, QUERY_DIM_TIME, QUERY_DIM_STOCK
 from airflow.operators.python import PythonOperator 
-from tasks_template import create_insert_temp_table, create_biq_query_table, insert_job_dim_time, insert_job_fact
+from tasks_template import create_insert_temp_table, create_biq_query_table, insert_job_dim_time, insert_job_fact, insert_job_dim_stock
 import datetime
 
 PROJET_ID = os.environ.get('PROJECT_ID', "data-engineering-streaming") 
@@ -74,15 +74,22 @@ with DAG(
                                                         'query': QUERY_FACT,
                                                         'client': client } ) 
 
-    insert_data_dim_time = PythonOperator( python_callable = insert_job_dim_time,
+    insert_data_dim_time = PythonOperator( python_callable = insert_job_dim_time, 
                                     task_id = "insert_data_dim_time_table" ,
                                     op_kwargs = { 'DATASET_ID': DATASET_ID,
-                                                    'table_ref_id': "fact",
+                                                    'table_ref_id': "dim_time",
                                                     'query': QUERY_DIM_TIME,
                                                     'client': client } ) 
     
+    insert_job_dim_stock_table = PythonOperator( python_callable = insert_job_dim_stock,
+                                        task_id = "insert_data_dim_stock_table" ,
+                                        op_kwargs = { 'DATASET_ID': DATASET_ID,
+                                                        'table_ref_id': "dim_stock",
+                                                        'query': QUERY_DIM_STOCK,
+                                                        'client': client } ) 
 
 
     create_insert_temp_table_big_query >> create_table_fact >> insert_job_fact_table
-    create_insert_temp_table_big_query >> create_dim_table_time >> insert_data_dim_time
-    create_insert_temp_table_big_query >> create_tem_table_stock_exchange_price
+    create_insert_temp_table_big_query >> create_dim_table_time  >> insert_data_dim_time
+    create_insert_temp_table_big_query >> create_tem_table_stock_exchange_price >> insert_job_dim_stock_table
+

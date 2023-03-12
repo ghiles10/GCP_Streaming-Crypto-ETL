@@ -19,11 +19,11 @@ SCHEMA_DIM_TIME = [
 
 SCHEMA_DIM_STOCK = [
     bigquery.SchemaField("symbol", "STRING", mode="REQUIRED"),
-    bigquery.SchemaField("buy", "FLOAT64", mode="NULLABLE"),
-    bigquery.SchemaField("sell", "FLOAT64", mode="NULLABLE"),
-    bigquery.SchemaField("changeRate", "FLOAT64", mode="NULLABLE"),
-    bigquery.SchemaField("changePrice", "FLOAT64", mode="NULLABLE"),
-    bigquery.SchemaField("vol", "FLOAT64", mode="NULLABLE")
+    bigquery.SchemaField("buy", "STRING", mode="NULLABLE"),
+    bigquery.SchemaField("sell", "STRING", mode="NULLABLE"),
+    bigquery.SchemaField("changerate", "STRING", mode="NULLABLE"),
+    bigquery.SchemaField("changeprice", "STRING", mode="NULLABLE"),
+    bigquery.SchemaField("vol", "STRING", mode="NULLABLE")
 
 ]   
 

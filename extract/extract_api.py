@@ -1,6 +1,7 @@
 import requests
 import json
 import logging_config
+import pandas as pd
 
 # logging
 logger = logging_config.logger
@@ -52,4 +53,4 @@ if __name__ == "__main__" :
 
     extract_api = ExtractApi()
     extract_api.extract_symbols()
-    extract_api.extract_data() 
+    data = extract_api.extract_data() 

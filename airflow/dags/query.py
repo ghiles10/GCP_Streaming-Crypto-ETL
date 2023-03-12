@@ -19,3 +19,8 @@ QUERY_DIM_TIME = """
 SELECT time, year, month, day, hour
 FROM data-engineering-streaming.finance.temp_table ; 
 """ 
+
+QUERY_DIM_STOCK = """
+SELECT symbol, buy, sell, changerate, changeprice, vol
+FROM data-engineering-streaming.finance.temp_table ; 
+""" 

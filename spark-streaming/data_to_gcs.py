@@ -33,7 +33,7 @@ query = (data_stream_read
          .partitionBy("year" , "month", "day", "hour")
          .option("path", DATA_PATH )
          .option("checkpointLocation", CHECKPOINT_PATH )
-         .trigger(processingTime="50 seconds")
+         .trigger(processingTime="10 seconds")
          .start() )
 
 query.awaitTermination()

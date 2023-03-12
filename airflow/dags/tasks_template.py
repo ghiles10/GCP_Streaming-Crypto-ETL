@@ -72,6 +72,24 @@ def insert_job_dim_time(DATASET_ID , table_ref_id, query, client):
     table_ref = client.dataset(DATASET_ID).table(table_ref_id)
     table = client.get_table(table_ref)
 
-    rows_to_insert = [(str(row.time), row.year, row.month, row.day, row.hour) for row in results]
+    rows_to_insert = [(str(row.time), str(row.year), row.month, row.day, row.hour) for row in results]
     if rows_to_insert:
         client.insert_rows(table, rows_to_insert)
+    else :
+        raise ValueError(f"No rows to insert, len of rows_to_insert is {len(rows_to_insert)}")
+
+def insert_job_dim_stock(DATASET_ID , table_ref_id, query, client):
+
+    """retreive data from a query ( temp table) and insert to fact and dim table """
+
+    query_job = client.query(query)
+    results = query_job.result()
+
+    table_ref = client.dataset(DATASET_ID).table(table_ref_id)
+    table = client.get_table(table_ref)
+
+    rows_to_insert = [(row.symbol, row.buy, row.sell, row.changerate, row.changeprice, row.vol) for row in results]
+    if rows_to_insert:
+        client.insert_rows(table, rows_to_insert)
+
+        

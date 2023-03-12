@@ -66,9 +66,14 @@ def preprocess_stream(spark, data_stream,  topic = "finance", output_mode="appen
                                             )                                
 
   data_stream_json =  data_stream_json.withColumn("symbol", split(data_stream_json["symbol"], "-")[0]) 
-  logger.debug("end of preprocessing from kafka topic: {}".format(topic) ) 
 
+  logger.debug("end of preprocessing from kafka topic: {}".format(topic) ) 
   return data_stream_json
+
+
+
+
+
 
   # # Staet the query to write the output to a memoty table 
   # query = (data_stream_json
