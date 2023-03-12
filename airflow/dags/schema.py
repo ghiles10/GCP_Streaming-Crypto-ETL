@@ -11,10 +11,10 @@ SCHEMA_FACT = [
 
 SCHEMA_DIM_TIME = [
     bigquery.SchemaField("time", "TIMESTAMP", mode="REQUIRED"),
-    bigquery.SchemaField("year", "DATE", mode="REQUIRED"),
-    bigquery.SchemaField("month", "INT64", mode="REQUIRED"),
-    bigquery.SchemaField("day", "INT64", mode="REQUIRED"),
-    bigquery.SchemaField("hour", "INT64", mode="REQUIRED")
+    bigquery.SchemaField("year", "DATE", mode="NULLABLE"),
+    bigquery.SchemaField("month", "INT64", mode="NULLABLE"),
+    bigquery.SchemaField("day", "INT64", mode="NULLABLE"),
+    bigquery.SchemaField("hour", "INT64", mode="NULLABLE")
 ]   
 
 SCHEMA_DIM_STOCK = [
