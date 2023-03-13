@@ -13,4 +13,3 @@ formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(name)s - %(module
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 logger.setLevel(logging.DEBUG) 
-

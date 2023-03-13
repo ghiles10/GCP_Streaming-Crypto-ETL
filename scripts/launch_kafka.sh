@@ -1,7 +1,14 @@
 #!bin/bash 
 
-echo " Launching Zookeeper "
-bin/zookeeper-server-start.sh config/zookeeper.properties
+echo " !!!! export KAFKA_ADDRESS=IP.ADD.RE.SS"
+echo "The Kafka Control Center should be available on port 9021"
 
-echo " Launching Kafka " 
-bin/kafka-server-start.sh config/server.properties
+cd ~/kafka && \
+docker-compose build && \
+docker-compose up -d
+
+echo "Kafka is running" 
+echo "extracting data from url's" 
+
+python ~/extract/send_to_kafka.py 
+

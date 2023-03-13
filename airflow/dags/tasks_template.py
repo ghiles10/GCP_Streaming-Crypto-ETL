@@ -23,7 +23,7 @@ def create_insert_temp_table(PROJET_ID, DATASET_ID, TABLE_ID, BUCKET, client)   
     month = str(now.month)
     day = str(now.day)
     
-    uri = f"{BUCKET}/data/year={year}/month={month}/day=6/*.csv"
+    uri = f"{BUCKET}/data/year={year}/month={month}/day={day}/*.csv"
 
     load_job = client.load_table_from_uri(
         uri, table_id, job_config=job_config
@@ -38,7 +38,7 @@ def create_insert_temp_table(PROJET_ID, DATASET_ID, TABLE_ID, BUCKET, client)   
 
 def create_biq_query_table(PROJET_ID, DATASET_ID, TABLE_ID, schema, client)   :
 
-    """ create a temp table to insert data from GCS to BigQuery"""
+    """ create table in BigQuery"""
     
     table_id = f"{PROJET_ID}.{DATASET_ID}.{TABLE_ID}"
 
@@ -66,7 +66,7 @@ def insert_job_fact(DATASET_ID , table_ref_id, query, client):
     
 def insert_job_dim_time(DATASET_ID , table_ref_id, query, client):
 
-    """retreive data from a query ( temp table) and insert to fact and dim tables """
+    """retreive data from a query ( temp table) and insert to fact and dim time table """
 
     query_job = client.query(query)
     results = query_job.result()
@@ -82,7 +82,7 @@ def insert_job_dim_time(DATASET_ID , table_ref_id, query, client):
 
 def insert_job_dim_stock(DATASET_ID , table_ref_id, query, client):
 
-    """retreive data from a query ( temp table) and insert to fact and dim table """
+    """retreive data from a query ( temp table) and insert to fact and dim stock table """
 
     query_job = client.query(query)
     results = query_job.result()

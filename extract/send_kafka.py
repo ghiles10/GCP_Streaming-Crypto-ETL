@@ -4,53 +4,49 @@ import time
 from extract_api import ExtractApi
 import logging_config
 
-# logging
+# Initialisation de la configuration de logging
 logger = logging_config.logger
 
-class SendKafka(ExtractApi) : 
-
-    """ this class send extracted data to kafka producer"""
+class SendKafka(ExtractApi):
     
-    def __init__(self, topic = 'finance') : 
+    """ Class pour envoyer les données extraites à un producer Kafka"""
 
+    def __init__(self, topic='finance'):
+
+        # Appel au constructeur de la classe parente ExtractApi
         super().__init__()
+
+        # Initialisation du compteur de messages envoyés et du nom du topic Kafka
         self.message_count = 0
         self.topic = topic
 
-    def send_events(self, producer, topic = 'finance') :  
+    def send_events(self, producer):
 
+        """Méthode pour envoyer les données extraites à un producteur Kafka"""
 
-        """ this method send data to kafka """
-        topic = self.topic 
-        # appel  extract symbol héritage 
-
+        # Appel à la méthode extract_symbols de la classe parente
         logger.debug("send_events : extract symbols")
-        print('extract symbols -------------------------------------------')
         self.extract_symbols() 
-        
-        # appel extract data héritage 
+
+        # Initialisation du producteur Kafka
         logger.debug("send_events : producer is initialized")
+        while True:
 
-        while True : 
-
-            logger.debug("send data to kafka boucle while")
-
+            # Extraction des données pour les symboles extraits
             data = self.extract_data()
-
-            for info in data : 
-                print('dans la bouce for -------------------------------------------')
-                
+            for info in data:
                 time.sleep(3)
-                producer.send(topic, info)
-                self.message_count += 1 
-                print(f"send data to kafka {self.message_count}")
-
+                # Envoi des données au producteur Kafka
+                producer.send(self.topic, info)
+                self.message_count += 1
+                logger.debug(f"sent message {self.message_count}")
     
-
-if __name__ == "__main__" : 
-
+# Bloc principal
+if __name__ == "__main__":
+    
+    # Création de l'objet SendKafka
     send_kafka = SendKafka('finance')
-
-    producer = KafkaProducer(bootstrap_servers = "localhost:9092", value_serializer = lambda x : json.dumps(x).encode("utf-8"))  
-    send_kafka.send_events(producer) 
-    
+    # Initialisation du producteur Kafka
+    producer = KafkaProducer(bootstrap_servers="localhost:9092", value_serializer=lambda x: json.dumps(x).encode("utf-8"))  
+    # Envoi des données extraites au producteur Kafka
+    send_kafka.send_events(producer)

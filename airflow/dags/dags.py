@@ -1,21 +1,22 @@
 import os 
 from google.cloud import bigquery
-from airflow import DAG
 import datetime
 from schema import SCHEMA_FACT, SCHEMA_DIM_TIME, SCHEMA_DIM_STOCK
 from query import QUERY_FACT, QUERY_DIM_TIME, QUERY_DIM_STOCK
+from airflow import DAG
 from airflow.operators.python import PythonOperator 
 from tasks_template import (create_insert_temp_table, 
                             create_biq_query_table, insert_job_dim_time, insert_job_fact, insert_job_dim_stock,drop_temp_table ) 
 from airflow.operators.dummy_operator import DummyOperator
 
-
+# Get environment variables
 PROJET_ID = os.environ.get('PROJECT_ID')
 DATASET_ID= os.environ.get('DATASET_ID') 
 TABLE_ID= os.environ.get('TABLE_ID') 
 BUCKET = os.environ.get('BUCKET')
 GOOGLE_APPLICATION_CREDENTIALS = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS") 
 
+# Define default arguments
 default_args = {
     'owner' : 'airflow' , 
     'retries': 3,
@@ -25,6 +26,7 @@ default_args = {
     'sla': datetime.timedelta(hours=1)
 } 
 
+# Define DAG
 with DAG(
     dag_id = 'kafka-finance',
     default_args = default_args,
@@ -36,8 +38,10 @@ with DAG(
     
 ) as dag: 
         
+    # Create a BigQuery client object.    
     client = bigquery.Client()
     
+    #Dummy operator for link
     created_tables = DummyOperator(task_id='created_tables')
 
     create_insert_temp_table_big_query = PythonOperator( python_callable = create_insert_temp_table,
@@ -103,8 +107,8 @@ with DAG(
                                                     'TABLE_ID': TABLE_ID,
                                                     'client': client } ) 
 
-
-    [create_insert_temp_table_big_query ,create_table_fact, create_dim_table_time, create_table_stock_exchange_price] >>created_tables>> [insert_job_fact_table ,insert_data_dim_time, insert_job_dim_stock_table] >> drop_temporary_table
-    
-
-
+    [create_insert_temp_table_big_query ,
+      create_table_fact, create_dim_table_time,
+      create_table_stock_exchange_price] >>created_tables>> [insert_job_fact_table ,
+                                                              insert_data_dim_time,
+                                                              insert_job_dim_stock_table] >> drop_temporary_table
