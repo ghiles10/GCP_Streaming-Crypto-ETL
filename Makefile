@@ -23,7 +23,7 @@ install:
 
 format  : install
 	pip install black
-	cd .. && black GCP_Streaming-Crypto-ETL/	
+	black workspaces/GCP_Streaming-Crypto-ETL/	
 
 test : install
 	pytest -v tests/
