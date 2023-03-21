@@ -21,6 +21,7 @@ infra-up: tf-init tf-apply
 
 install: 
 	pip install -r $(REQS)
+	pip install pytest
 
 format  : install
 	pip install black
