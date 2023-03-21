@@ -1,5 +1,6 @@
 airflow_directory = ./airflow 
 REQS=tests/requirements_tests.txt
+DIR:=$(shell pwd)
 
 ###################### Infrastructure as Code setup    
 tf-init:                             
@@ -23,7 +24,7 @@ install:
 
 format  : install
 	pip install black
-	black /workspaces/GCP_Streaming-Crypto-ETL/	
+	black $(DIR)
 
 test : install
 	pytest -v tests/

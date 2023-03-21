@@ -1,6 +1,7 @@
 import sys
+import os
 
-sys.path.append(r"/workspaces/GCP_Streaming-Crypto-ETL")
+sys.path.append(os.getcwd())
 
 import responses
 from extract.extract_api import ExtractApi
