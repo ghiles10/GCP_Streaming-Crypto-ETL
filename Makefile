@@ -21,7 +21,7 @@ infra-up: tf-init tf-apply
 install: 
 	pip install -r $(REQS)
 
-black : install
+format  : install
 	pip install black
 	cd .. && black GCP_Streaming-Crypto-ETL/	
 
@@ -32,7 +32,7 @@ lint: install
 	pip install pylint
 	-pylint --disable=R,C GCP_Streaming-Crypto-ETL/
 
-ci: install test lint 
+ci: install format test lint 
 
 ###################### airflow docker setup 
 
