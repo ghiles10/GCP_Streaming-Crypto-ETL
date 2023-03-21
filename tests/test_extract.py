@@ -2,13 +2,12 @@ import sys
 sys.path.append(r"/workspaces/GCP_Streaming-Crypto-ETL") 
 
 import responses 
-
 from extract.extract_api import ExtractApi 
 
 @responses.activate
 def test_coherance_extract_symbols(): 
 
-    """ Test de la cohérence de la méthode extract_symbols"""
+    """ Test de la cohérence de la class ExtractApi"""
 
     # Initialisation de la réponse
     responses.add(responses.GET, "https://api.binance.com/api/v3/ticker/price", 
@@ -27,5 +26,6 @@ def test_coherance_extract_symbols():
                                 json={ 'data' : {"symbol": "BTCUSDT", "price" : "10000"}  },
                                 status=200) 
 
+    # test extraction des données de l'API KuCoin
     data = extract_api.extract_data() 
     assert data[0] == {"symbol": "BTCUSDT", "price" : "10000"} 
