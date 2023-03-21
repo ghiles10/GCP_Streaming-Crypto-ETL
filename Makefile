@@ -26,7 +26,7 @@ format  : install
 	cd .. && black GCP_Streaming-Crypto-ETL/	
 
 test : install
-	pytest -v tests
+	pytest -v tests/
 
 lint: install
 	pip install pylint
