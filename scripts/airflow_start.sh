@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "build airflow docker images"
-cd ~/airflow
+cd ./airflow
 docker-compose build
 
 echo "run airflow-init"
