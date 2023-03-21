@@ -20,4 +20,12 @@ def test_coherance_extract_symbols():
     # Extraction des symboles de Binance
     extract_api.extract_symbols() 
     # Vérification de la cohérence des symboles
-    assert extract_api.symbols == ["BTCUSDT"]
+    assert extract_api.symbols == ["BTCUSDT"] 
+
+    # Initialisation de la réponse 
+    responses.add(responses.GET, "https://api.kucoin.com/api/v1/market/stats?symbol=BTC-USDT",
+                                json={ 'data' : {"symbol": "BTCUSDT", "price" : "10000"}  },
+                                status=200) 
+
+    data = extract_api.extract_data() 
+    assert data[0] == {"symbol": "BTCUSDT", "price" : "10000"} 
