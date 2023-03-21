@@ -23,7 +23,7 @@ install:
 
 format  : install
 	pip install black
-	black workspaces/GCP_Streaming-Crypto-ETL/	
+	black /workspaces/GCP_Streaming-Crypto-ETL/	
 
 test : install
 	pytest -v tests/
