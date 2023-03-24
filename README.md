@@ -24,7 +24,12 @@ This project aims to build a real-time ETL (Extract, Transform, Load) pipeline f
 
 ## Architecture
 
-....
+...
+
+## DAG 
+
+![DAG](images/airflow_capture.PNG)
+
 ## Features
 
 - Infrastructure as Code (IaC) management with Terraform
