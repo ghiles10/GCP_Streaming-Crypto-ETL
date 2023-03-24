@@ -2,7 +2,7 @@
 
 Kafka is set up in a Docker Compose configuration, which runs inside a virtual machine on Google Cloud Platform 
 
-#Setup 
+# Setup 
 
 - SSH connection to VM 
 
