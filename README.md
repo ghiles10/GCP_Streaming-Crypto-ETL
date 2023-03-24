@@ -56,8 +56,8 @@ You must have a Google Cloud Platform (GCP) account with the command-line interf
 The project is organized into several folders specific to each major component.
 
 - Infrastructure as code & GCP - [IaC](setup/terraform.md)
-- Extract - [Extract](setup/extract.md)
-- Stream - [Kafka](setup/Kafka.md)
+- Extract - [Extract](setup/Extract.md)
+- Stream - [Kafka](setup/kafka.md)
 - Stream Processing - [Spark](setup/spark_cluster.md)
 - Orchestration - [Airflow](setup/airflow.md)
 
