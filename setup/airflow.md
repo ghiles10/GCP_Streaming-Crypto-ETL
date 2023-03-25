@@ -2,7 +2,15 @@
 
 Airflow has been set up on Docker, and it is running on a dedicated compute instance.
 
-Individual Airflow DAGs for each stage of the ETL pipeline, including data collection, data processing, and data warehousing.
+Individual Airflow DAGs for each stage of the ETL pipeline. 
+
+## Flow 
+
+- a temporary table, a fact table and two dimension tables are created only once 
+- the data of the temporary table are inserted in the final tables by respecting a specific schema
+- the temporary table is deleted until airflow is triggered again
+
+## Setup 
 
 - clone repo 
 
